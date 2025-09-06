@@ -1,0 +1,82 @@
+{{- if and (.Values.ingress) (.Values.ingress.enabled) }}
+
+# Ingress for main app
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webzcan-ingress
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: webzcan
+  annotations:
+     # Attach HTTPS redirect middleware
+    traefik.ingress.kubernetes.io/router.middlewares: {{ .Values.namespace }}-force-https@kubernetescrd,{{ .Values.namespace }}-redirect-www@kubernetescrd
+    # Entry points
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    # SSL/TLS certificate
+    cert-manager.io/cluster-issuer: {{ .Values.ssl.clusterIssuer | default "letsencrypt-prod" }}    
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  # Add TLS configuration
+  {{- if .Values.ssl.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.domain | default "localhost" }}
+    - www.{{ .Values.domain | default "localhost" }}
+    secretName: {{ .Values.ssl.secretName | default "tls-secret" }}
+  {{- end }}
+  rules:
+  - host: {{ .Values.domain | default "localhost" }}
+    http:
+      paths:
+      {{- if .Values.backend.enabled }}
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: webzcan-backend-svc
+            port:
+              number: {{ .Values.backend.service.port }}
+      {{- end }}
+
+      {{- if .Values.frontend.enabled }}
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webzcan-frontend-svc
+            port:
+              number: {{ .Values.frontend.service.port }}
+      {{- end }}
+  - host: www.{{ .Values.domain | default "localhost" }}
+    http:
+      paths:
+      {{- if .Values.backend.enabled }}
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: webzcan-backend-svc
+            port:
+              number: {{ .Values.backend.service.port }}
+      {{- end }}
+      {{- if .Values.zap.enabled }}
+      - path: /zap
+        pathType: Prefix
+        backend:
+          service:
+            name: webzcan-zap-svc
+            port:
+              number: {{ .Values.zap.service.port }}
+      {{- end }}
+      {{- if .Values.frontend.enabled }}
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webzcan-frontend-svc
+            port:
+              number: {{ .Values.frontend.service.port }}
+      {{- end }}
+      
+{{- end }}

@@ -1,0 +1,138 @@
+{{- if .Values.frontend.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webzcan-frontend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: webzcan-frontend
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: webzcan-frontend
+  template:
+    metadata:
+      labels:
+        app: webzcan-frontend
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      {{- if .Values.frontend.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.frontend.image.pullSecrets | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.frontend.service.port }}
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.frontend.env.nodeEnv | quote }}
+            - name: API_BASE_URL
+              value: {{ tpl .Values.frontend.env.API_BASE_URL . | quote }}
+          {{- if .Values.frontend.resources }}
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+          {{- end }}
+{{- end }}
+
+{{- if .Values.zap.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webzcan-zap
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: webzcan-zap
+spec:
+  replicas: {{ .Values.zap.replicaCount }}
+  selector:
+    matchLabels:
+      app: webzcan-zap
+  template:
+    metadata:
+      labels:
+        app: webzcan-zap
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      containers:
+        - name: zap
+          image: "{{ .Values.zap.image.repository }}:{{ .Values.zap.image.tag }}"
+          imagePullPolicy: {{ .Values.zap.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.zap.service.port }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - {{ .Values.zap.command | quote }}
+          {{- if .Values.zap.resources }}
+          resources:
+            {{- toYaml .Values.zap.resources | nindent 12 }}
+          {{- end }}
+{{- end }}
+
+{{- if .Values.backend.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webzcan-backend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: webzcan-backend
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: webzcan-backend
+  template:
+    metadata:
+      labels:
+        app: webzcan-backend
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      {{- if .Values.backend.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.backend.image.pullSecrets | nindent 8 }}
+      {{- end }}
+      {{- if .Values.zap.enabled }}
+      # Wait for ZAP service to be ready before starting backend
+      initContainers:
+        - name: wait-for-zap
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Waiting for ZAP service to be ready..."
+              until nc -z webzcan-zap-svc {{ .Values.zap.service.port }}; do
+                echo "ZAP service not ready, waiting 5 seconds..."
+                sleep 5
+              done
+              echo "ZAP service is ready!"
+      {{- end }}
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.backend.service.port }}
+          env:
+            - name: ALLOWED_ORIGINS
+              value: {{ tpl .Values.backend.env.ALLOWED_ORIGINS . | quote }}
+            - name: ZAP_URL
+              value: {{ .Values.backend.env.ZAP_URL | quote }}
+            - name: ZAP_API_KEY
+              value: {{ .Values.backend.env.ZAP_API_KEY | quote }}
+            - name: ENV
+              value: {{ .Values.backend.env.ENV | quote }}
+          {{- if .Values.backend.resources }}
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+          {{- end }}
+{{- end }}

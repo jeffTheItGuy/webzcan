@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128.98067mm"
+   height="68.732002mm"
+   viewBox="0 0 128.98067 68.732003"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="icon.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   sodipodi:docname="icon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.49449362"
+     inkscape:cx="436.81049"
+     inkscape:cy="301.31835"
+     inkscape:window-width="983"
+     inkscape:window-height="676"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="129.19366"
+       y="173.29346"
+       width="238.61363"
+       height="121.06075"
+       id="rect408" />
+    <rect
+       x="129.19366"
+       y="173.29346"
+       width="238.61363"
+       height="121.06075"
+       id="rect472" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-0.63541805,-75.990689)">
+    <text
+       xml:space="preserve"
+       transform="matrix(2.7348695,0,0,4.0255023,-353.74175,-642.08208)"
+       id="text406"
+       style="font-weight:800;font-size:24px;font-family:Montserrat;-inkscape-font-specification:'Montserrat, Ultra-Bold';white-space:pre;shape-inside:url(#rect408);fill:#4a4a9f;stroke-width:49.4362;stroke-linecap:round;stroke-miterlimit:0;paint-order:fill markers stroke"><tspan
+         x="129.19336"
+         y="195.35121"
+         id="tspan375">W</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(3.361003,0,0,4.0911904,-358.0028,-654.49632)"
+       id="text470"
+       style="font-weight:800;font-size:24px;font-family:Montserrat;-inkscape-font-specification:'Montserrat, Ultra-Bold';white-space:pre;shape-inside:url(#rect472);fill:#4a4a9f;stroke-width:49.4362;stroke-linecap:round;stroke-miterlimit:0;paint-order:fill markers stroke"><tspan
+         x="129.19336"
+         y="195.35121"
+         id="tspan377">Z</tspan></text>
+  </g>
+</svg>

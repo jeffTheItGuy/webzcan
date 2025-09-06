@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ../../
+      dockerfile: .docker/prod/frontend.Dockerfile
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  backend:
+    build:
+      context: ../../
+      dockerfile: .docker/prod/backend.Dockerfile
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+      - DOTNET_CLI_TELEMETRY_OPTOUT=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  zap:
+      image: zaproxy/zap-bare:latest
+      container_name: web-zcan-zap
+      ports:
+        - "8090:8090"
+      command: >
+        zap.sh -daemon
+        -host 0.0.0.0
+        -port 8090
+        -config api.disablekey=true
+        -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8090/JSON/core/view/version/"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+        start_period: 40s
+
+
+
+
+volumes:
+  zap-data:
+    driver: local

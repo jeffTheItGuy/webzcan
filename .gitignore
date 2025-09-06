@@ -1,0 +1,72 @@
+# =========================
+# React + Vite (Frontend)
+# =========================
+node_modules/
+dist/
+dist-ssr/
+*.local
+.env
+.env.*
+!.env.example
+
+# Vite cache
+.vite/
+
+# Editor folders
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =========================
+# ASP.NET Core (Backend)
+# =========================
+## Build results
+bin/
+obj/
+out/
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Visual Studio
+.vscode/
+*.cache
+*.dbmdl
+*.bak
+*.backup
+*.log
+*.ldf
+*.mdf
+
+## Dotnet artifacts
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+*.nuget.props
+*.nuget.targets
+
+# IIS
+iisexpress/
+*.vspscc
+*.vssscc
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Others
+.DS_Store
+Thumbs.db

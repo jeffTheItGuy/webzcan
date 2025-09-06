@@ -1,0 +1,88 @@
+# =========================================
+#  Global Settings
+# =========================================
+namespace: webzcan
+release: webzcan
+
+domain: webzcan.local
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+
+# ===================================================
+#  Frontend Configuration
+# ===================================================
+frontend:
+  enabled: true 
+  replicaCount: 1
+  image:
+    repository: myapp/frontend
+    tag: latest
+    pullPolicy: Never
+    pullSecrets: []
+  service:
+    port: 8080
+  env:
+    nodeEnv: production
+    VITE_API_BASE_URL: "http://{{ .Values.domain }}"
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: 512Mi
+    requests:
+      cpu: "0.1"
+      memory: 128Mi
+
+# ===================================================
+#  Backend Configuration
+# ===================================================
+backend:
+  enabled: true  
+  replicaCount: 1
+  image:
+    repository: myapp/backend
+    tag: latest
+    pullPolicy: Never
+    pullSecrets: []
+  service:
+    port: 8000
+  env:
+    ALLOWED_ORIGINS: "http://{{ .Values.domain }},http://www.{{ .Values.domain }},http://localhost:5173"
+    ZAP_URL: "http://webzcan-zap-svc:8090"
+    ZAP_API_KEY: ""
+    ENV: production
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: "0.2"
+      memory: 256Mi
+
+# ===================================================
+#  OWASP ZAP Configuration
+# ===================================================
+zap:
+  enabled: true
+  replicaCount: 1
+  image: 
+    repository: zaproxy/zap-bare
+    tag: 2.14.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8090
+  command: >
+    zap.sh -daemon
+    -host 0.0.0.0
+    -port 8090
+    -config api.disablekey=true
+    -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: "0.2"
+      memory: 256Mi

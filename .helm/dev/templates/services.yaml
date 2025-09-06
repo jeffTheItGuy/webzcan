@@ -1,0 +1,49 @@
+{{- if .Values.frontend.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: webzcan-frontend-svc
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: webzcan-frontend
+spec:
+  selector:
+    app: webzcan-frontend
+  ports:
+  - port: {{ .Values.frontend.service.port }}              
+    targetPort: {{ .Values.frontend.service.port }} 
+{{- end }}
+
+{{- if .Values.backend.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webzcan-backend-svc
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: webzcan-backend
+spec:
+  selector:
+    app: webzcan-backend
+  ports:
+  - port: {{ .Values.backend.service.port }}   
+    targetPort: {{ .Values.backend.service.port }}
+{{- end }}
+
+{{- if .Values.zap.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webzcan-zap-svc
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: webzcan-zap
+spec:
+  selector:
+    app: webzcan-zap
+  ports:
+  - port: {{ .Values.zap.service.port }}
+    targetPort: {{ .Values.zap.service.port }}
+{{- end }}
